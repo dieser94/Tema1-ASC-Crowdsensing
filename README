@@ -1,0 +1,31 @@
+////////////////////////////////////////////////////////////////////////////////////
+Tema 1 ASC - Crowdsensing
+Cojan Eugen Nicolae 332CA
+
+Idee de implementare:
+
+	Pentru rezolvarea problemei am folosit un thread pool de 8 thread-uri per device
+care sta si asteapta elemente sa fie adaugate intr-o coada de lucru.
+	Folosit un event de setup care face ca toate thread-urile sa astepte pana se
+termina setup-ul, in cadrul caruia, fiecare device primeste o bariera reentranta,
+o lista cu toate device-urile si o lista de lock-uri pentru locatii.
+	Se asteapta terminarea timepoint-ului curent --> au fost transmise toate
+scripturile, sunt adaugate in coada si li se permite worker threads-urilor sa le
+prelucreze.
+	Fiecare worker thread incearca sa faca acquire sa treaca de un semafor pana sa
+poata extrage un element din coada de lucru.Daca a primit comanda de shutdown, break
+si asteapta celelalte worker threads-uri sa ajunga la bariera ca sa poata termina
+toti.De fiecare data cand un worker thread termina de prelucrat un script, este 
+incrementat contorul intern al unui semafor din device thread.Cand toate scripturile
+au fost prelucrate, device thread transmite comanda de shutdown si elibereaza
+worker threads.
+
+
+Dificultati:
+
+	A luat o gramada de timp pana am inteles ce se dorea de la mine si pana am gasit
+cum sa fac sa treaca primele teste.Dupa acel punct a fost usor.De preferat pe viitor
+sa fim anuntati sa testam direct pe cluster pentru testele de stres(9).
+
+
+////////////////////////////////////////////////////////////////////////////////////
